@@ -22,7 +22,7 @@ app.get('/', function (req, res) {
 
 // Get product info API
 app.get('/product', function (req, res) {
-  db.all("SELECT * FROM product", (err, rows) => {
+  db.all("SELECT * FROM product WHERE obsolete='NOB'", (err, rows) => {
     if (err) {
       res.status(400).json({ "error": err.message });
       return;
@@ -32,18 +32,28 @@ app.get('/product', function (req, res) {
 })
 
 
-//Get membership info 
-// app.get('/membership', function (req, res) {
-//   let sql = `SELECT * FROM membership`;
-//   db.all(sql, (err, rows) => {
-//     if (err) {
-//       res.status(400).json({ "error": err.message });
-//       return;
-//     }
-//     res.status(200).json({ "data": rows });
-//   })
-
-// })
+app.get('/membership', function (req, res) {
+  if(req.query.grade){
+    let query = req.query.grade.toUpperCase();
+    console.log(query);
+    let sql = `SELECT * FROM membership WHERE grade='${query}'`;
+    db.all(sql, (err, rows) => {
+      if (err) {
+        res.status(400).json({ "error": err.message });
+        return;
+      }
+      res.status(200).json({ "data": rows });
+    })
+  }
+  else 
+  db.all('SELECT * FROM membership', (err, rows) => {
+    if (err) {
+      res.status(400).json({ "error": err.message });
+      return;
+    }
+    res.status(200).json({ "data": rows });
+  })
+ })
 
 
 // Add product to cart API with query params productId
